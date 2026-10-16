@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Directorio de Contactos - Vercel & AWS RDS</title>
+    <style>
+        table { border-collapse: collapse; width: 60%; margin: 20px auto; font-family: Arial, sans-serif; }
+        th, td { border: 1px solid #dddddd; text-align: left; padding: 8px; }
+        th { background-color: #4CAF50; color: white; }
+        h2 { text-align: center; font-family: Arial, sans-serif; }
+        .mensaje-cargas { text-align: center; font-family: Arial, sans-serif; color: #666; }
+    </style>
+</head>
+<body>
+    <h2>Lista de Contactos (Obtenida desde AWS RDS vía Vercel)</h2>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Teléfono</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody id="tabla-contactos">
+            <tr>
+                <td colspan="4" class="mensaje-cargas">Cargando contactos de la base de datos...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Consume el endpoint /contactos usando el proxy /api/ de Vercel
+        fetch('/api/contactos')
+            .then(response => response.json())
+            .then(contactos => {
+                const tbody = document.getElementById('tabla-contactos');
+                tbody.innerHTML = '';
+
+                if (Array.isArray(contactos) && contactos.length > 0) {
+                    contactos.forEach((c, index) => {
+                        const tr = document.createElement('tr');
+                        
+                        // Respeta los nombres de variables exactos de tu backend
+                        const id = c.ContactoID || c.ID || c.id || (index + 1);
+                        const nombre = c.Nombre || c.nombre || '-';
+                        const telefono = c.Telefono || c.telefono || '-';
+                        const email = c.Email || c.email || '-';
+
+                        tr.innerHTML = `
+                            <td>${id}</td>
+                            <td>${nombre}</td>
+                            <td>${telefono}</td>
+                            <td>${email}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="mensaje-cargas">No se encontraron contactos en la base de datos.</td></tr>';
+                }
+            })
+            .catch(error => {
+                console.error('Error al conectar con la API:', error);
+                document.getElementById('tabla-contactos').innerHTML = 
+                    '<tr><td colspan="4" class="mensaje-cargas" style="color: red;">Error al conectar con la API en AWS</td></tr>';
+            });
+    </script>
+</body>
+</html>
