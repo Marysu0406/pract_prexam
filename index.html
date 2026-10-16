@@ -31,40 +31,47 @@
     </table>
 
     <script>
-        // Consume el endpoint /contactos usando el proxy /api/ de Vercel
-        fetch('/api/contactos')
-            .then(response => response.json())
-            .then(contactos => {
-                const tbody = document.getElementById('tabla-contactos');
-                tbody.innerHTML = '';
+    fetch('/api/contactos')
+        .then(response => response.json())
+        .then(contactos => {
+            const tbody = document.getElementById('tabla-contactos');
+            tbody.innerHTML = '';
 
-                if (Array.isArray(contactos) && contactos.length > 0) {
-                    contactos.forEach((c, index) => {
-                        const tr = document.createElement('tr');
-                        
-                        // Respeta los nombres de variables exactos de tu backend
-                        const id = c.ContactoID || c.ID || c.id || (index + 1);
-                        const nombre = c.Nombre || c.nombre || '-';
-                        const telefono = c.Telefono || c.telefono || '-';
-                        const email = c.Email || c.email || '-';
+            const lista = Array.isArray(contactos) ? contactos : (contactos.data || []);
 
-                        tr.innerHTML = `
-                            <td>${id}</td>
-                            <td>${nombre}</td>
-                            <td>${telefono}</td>
-                            <td>${email}</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="4" class="mensaje-cargas">No se encontraron contactos en la base de datos.</td></tr>';
-                }
-            })
-            .catch(error => {
-                console.error('Error al conectar con la API:', error);
-                document.getElementById('tabla-contactos').innerHTML = 
-                    '<tr><td colspan="4" class="mensaje-cargas" style="color: red;">Error al conectar con la API en AWS</td></tr>';
-            });
-    </script>
+            if (lista.length > 0) {
+                lista.forEach((c, index) => {
+                    const tr = document.createElement('tr');
+                    
+                    // Mapeo flexible para ID
+                    const id = c.ContactoID || c.id_contacto || c.ID || c.id || (index + 1);
+
+                    // Mapeo flexible para Nombre
+                    const nombre = c.Nombre || c.nombre || c.nombre_contacto || c.NombreContacto || c.name || '-';
+
+                    // Mapeo flexible para Teléfono
+                    const telefono = c.Telefono || c.telefono || c.telefono_contacto || c.TelefonoContacto || c.phone || '-';
+
+                    // Mapeo flexible para Email
+                    const email = c.Email || c.email || c.email_contacto || c.EmailContacto || c.correo || c.Correo || '-';
+
+                    tr.innerHTML = `
+                        <td>${id}</td>
+                        <td>${nombre}</td>
+                        <td>${telefono}</td>
+                        <td>${email}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" class="mensaje">No hay contactos disponibles.</td></tr>';
+            }
+        })
+        .catch(error => {
+            console.error('Error al conectar con la API:', error);
+            document.getElementById('tabla-contactos').innerHTML = 
+                '<tr><td colspan="4" class="mensaje" style="color: red;">Error al consultar los contactos.</td></tr>';
+        });
+</script>
 </body>
 </html>
