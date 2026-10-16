@@ -32,8 +32,7 @@
 
     <script>
         // Consume el endpoint /contactos usando el proxy /api/ de Vercel
-        // Cambia esto temporalmente para probar directo a AWS:
-fetch('http://18.209.143.44:8000/contactos')
+        fetch('/api/contactos')
             .then(response => response.json())
             .then(contactos => {
                 const tbody = document.getElementById('tabla-contactos');
