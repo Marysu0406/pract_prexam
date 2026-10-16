@@ -40,20 +40,14 @@
             const lista = Array.isArray(contactos) ? contactos : (contactos.data || []);
 
             if (lista.length > 0) {
-                lista.forEach((c, index) => {
+                lista.forEach(c => {
                     const tr = document.createElement('tr');
                     
-                    // Mapeo flexible para ID
-                    const id = c.ContactoID || c.id_contacto || c.ID || c.id || (index + 1);
-
-                    // Mapeo flexible para Nombre
-                    const nombre = c.Nombre || c.nombre || c.nombre_contacto || c.NombreContacto || c.name || '-';
-
-                    // Mapeo flexible para Teléfono
-                    const telefono = c.Telefono || c.telefono || c.telefono_contacto || c.TelefonoContacto || c.phone || '-';
-
-                    // Mapeo flexible para Email
-                    const email = c.Email || c.email || c.email_contacto || c.EmailContacto || c.correo || c.Correo || '-';
+                    // Claves exactas devueltas por la API
+                    const id = c.id_contacto || '-';
+                    const nombre = c.nombre_completo || '-';
+                    const telefono = c.telefono || '-';
+                    const email = c.correo || '-';
 
                     tr.innerHTML = `
                         <td>${id}</td>
