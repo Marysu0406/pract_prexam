@@ -1,6 +1,10 @@
 {
   "rewrites": [
     {
+      "source": "/api/contactos",
+      "destination": "http://18.209.143.44:8000/contactos"
+    },
+    {
       "source": "/api/:path*",
       "destination": "http://18.209.143.44:8000/:path*"
     }
